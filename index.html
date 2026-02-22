@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PWA Manifest.json Generator</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#1a1a2e;--surface:#16213e;--surface2:#0f3460;--accent:#e94560;--accent2:#533483;--text:#eee;--text2:#aaa;--border:#2a2a4a;--radius:8px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+a{color:var(--accent)}
+h1{text-align:center;padding:24px 16px 8px;font-size:1.8rem;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:var(--text2);margin-bottom:24px;font-size:.9rem}
+.container{max-width:1400px;margin:0 auto;padding:0 16px 40px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:900px){.container{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;overflow:auto}
+.panel h2{font-size:1.1rem;margin-bottom:16px;color:var(--accent);display:flex;align-items:center;gap:8px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:.85rem;color:var(--text2);margin-bottom:4px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:.9rem;outline:none;transition:border .2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent)}
+.form-group textarea{resize:vertical;min-height:60px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:500px){.form-row{grid-template-columns:1fr}}
+.color-row{display:flex;align-items:center;gap:8px}
+.color-row input[type=color]{width:40px;height:34px;border:none;background:none;cursor:pointer}
+.color-row input[type=text]{flex:1}
+.btn{padding:8px 16px;border:none;border-radius:var(--radius);cursor:pointer;font-size:.85rem;font-weight:600;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#d63851}
+.btn-secondary{background:var(--surface2);color:var(--text)}
+.btn-secondary:hover{background:#1a4a80}
+.btn-sm{padding:5px 10px;font-size:.8rem}
+.btn-danger{background:#c0392b;color:#fff}
+.btn-danger:hover{background:#a93226}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+/* Icon section */
+.icon-upload{border:2px dashed var(--border);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;transition:border .2s;margin-bottom:16px}
+.icon-upload:hover{border-color:var(--accent)}
+.icon-upload input{display:none}
+.icon-grid{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+.icon-item{text-align:center;background:var(--bg);border-radius:var(--radius);padding:8px;border:1px solid var(--border)}
+.icon-item img{display:block;margin:0 auto 4px;image-rendering:pixelated}
+.icon-item span{font-size:.7rem;color:var(--text2)}
+.purpose-select{margin:12px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.purpose-select label{font-size:.85rem;color:var(--text2);display:flex;align-items:center;gap:4px;cursor:pointer}
+.purpose-select input[type=checkbox]{accent-color:var(--accent)}
+/* Shortcuts / Screenshots */
+.list-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:10px;position:relative}
+.list-item .remove-btn{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--accent);cursor:pointer;font-size:1.1rem}
+/* JSON preview */
+.json-preview{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:.82rem;line-height:1.5;overflow:auto;max-height:70vh;white-space:pre-wrap;word-break:break-all}
+.json-key{color:#e94560}.json-string{color:#53cf8e}.json-number{color:#f0db4f}.json-bool{color:#61afef}.json-null{color:#888}
+.json-bracket{color:#ccc}
+.toast{position:fixed;bottom:24px;right:24px;background:#27ae60;color:#fff;padding:10px 20px;border-radius:var(--radius);font-size:.9rem;opacity:0;transform:translateY(20px);transition:all .3s;pointer-events:none;z-index:999}
+.toast.show{opacity:1;transform:translateY(0)}
+.section-divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+.tag{display:inline-block;background:var(--surface2);color:var(--text);padding:2px 8px;border-radius:12px;font-size:.75rem;margin:2px}
+.categories-wrap{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+</style>
+</head>
+<body>
+<h1>🔧 PWA Manifest.json Generator</h1>
+<p class="subtitle">Visually create and preview your Progressive Web App manifest</p>
+<div class="container">
+<!-- Left: Form -->
+<div>
+<div class="panel">
+<h2>📋 Basic Info</h2>
+<div class="form-group"><label for="f-name">name</label><input id="f-name" placeholder="My Awesome App"></div>
+<div class="form-row">
+<div class="form-group"><label for="f-short_name">short_name</label><input id="f-short_name" placeholder="MyApp"></div>
+<div class="form-group"><label for="f-id">id</label><input id="f-id" placeholder="/"></div>
+</div>
+<div class="form-group"><label for="f-description">description</label><textarea id="f-description" rows="2" placeholder="A brief description of your app"></textarea></div>
+<div class="form-row">
+<div class="form-group"><label for="f-start_url">start_url</label><input id="f-start_url" placeholder="/" value="/"></div>
+<div class="form-group"><label for="f-scope">scope</label><input id="f-scope" placeholder="/"></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label for="f-display">display</label>
+<select id="f-display"><option value="standalone" selected>standalone</option><option value="fullscreen">fullscreen</option><option value="minimal-ui">minimal-ui</option><option value="browser">browser</option></select>
+</div>
+<div class="form-group"><label for="f-orientation">orientation</label>
+<select id="f-orientation"><option value="">— not set —</option><option value="any">any</option><option value="natural">natural</option><option value="portrait">portrait</option><option value="portrait-primary">portrait-primary</option><option value="portrait-secondary">portrait-secondary</option><option value="landscape">landscape</option><option value="landscape-primary">landscape-primary</option><option value="landscape-secondary">landscape-secondary</option></select>
+</div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>theme_color</label>
+<div class="color-row"><input type="color" id="f-theme_color_pick" value="#e94560"><input type="text" id="f-theme_color" value="#e94560"></div>
+</div>
+<div class="form-group"><label>background_color</label>
+<div class="color-row"><input type="color" id="f-background_color_pick" value="#1a1a2e"><input type="text" id="f-background_color" value="#1a1a2e"></div>
+</div>
+</div>
+<div class="form-row">
+<div class="form-group"><label for="f-lang">lang</label><input id="f-lang" placeholder="en-US"></div>
+<div class="form-group"><label for="f-dir">dir</label>
+<select id="f-dir"><option value="">— not set —</option><option value="ltr">ltr</option><option value="rtl">rtl</option><option value="auto">auto</option></select>
+</div>
+</div>
+<div class="form-group"><label for="f-categories">categories (comma-separated)</label><input id="f-categories" placeholder="utilities, productivity"></div>
+</div>
+
+<div class="panel" style="margin-top:16px">
+<h2>🖼️ Icons</h2>
+<div class="icon-upload" id="iconUploadArea">
+<p>📁 Click or drag an image here to upload</p>
+<p style="font-size:.8rem;color:var(--text2)">Recommended: 512×512 PNG</p>
+<input type="file" id="iconFileInput" accept="image/*">
+</div>
+<div class="purpose-select">
+<span style="font-size:.85rem">Purpose:</span>
+<label><input type="checkbox" id="purpose-any" checked> any</label>
+<label><input type="checkbox" id="purpose-maskable"> maskable</label>
+</div>
+<div id="iconPreviewGrid" class="icon-grid"></div>
+</div>
+
+<div class="panel" style="margin-top:16px">
+<h2>⚡ Shortcuts</h2>
+<div id="shortcutsList"></div>
+<button class="btn btn-secondary btn-sm" onclick="addShortcut()">+ Add Shortcut</button>
+</div>
+
+<div class="panel" style="margin-top:16px">
+<h2>📸 Screenshots</h2>
+<div id="screenshotsList"></div>
+<button class="btn btn-secondary btn-sm" onclick="addScreenshot()">+ Add Screenshot</button>
+</div>
+</div>
+
+<!-- Right: JSON Preview -->
+<div>
+<div class="panel" style="position:sticky;top:16px">
+<h2>📄 JSON Preview</h2>
+<div class="actions" style="margin-top:0;margin-bottom:12px">
+<button class="btn btn-primary btn-sm" onclick="copyJSON()">📋 Copy JSON</button>
+<button class="btn btn-secondary btn-sm" onclick="downloadJSON()">💾 Download manifest.json</button>
+</div>
+<div class="json-preview" id="jsonPreview"></div>
+</div>
+</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const SIZES=[48,72,96,128,144,192,256,384,512];
+let iconDataURL=null;
+let shortcuts=[];
+let screenshots=[];
+
+// Color sync
+document.getElementById('f-theme_color_pick').addEventListener('input',e=>{document.getElementById('f-theme_color').value=e.target.value;update()});
+document.getElementById('f-theme_color').addEventListener('input',e=>{document.getElementById('f-theme_color_pick').value=e.target.value;update()});
+document.getElementById('f-background_color_pick').addEventListener('input',e=>{document.getElementById('f-background_color').value=e.target.value;update()});
+document.getElementById('f-background_color').addEventListener('input',e=>{document.getElementById('f-background_color_pick').value=e.target.value;update()});
+
+// All form inputs trigger update
+document.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',update));
+
+// Icon upload
+const uploadArea=document.getElementById('iconUploadArea');
+const fileInput=document.getElementById('iconFileInput');
+uploadArea.addEventListener('click',()=>fileInput.click());
+uploadArea.addEventListener('dragover',e=>{e.preventDefault();uploadArea.style.borderColor='var(--accent)'});
+uploadArea.addEventListener('dragleave',()=>{uploadArea.style.borderColor='var(--border)'});
+uploadArea.addEventListener('drop',e=>{e.preventDefault();uploadArea.style.borderColor='var(--border)';if(e.dataTransfer.files[0])handleIconFile(e.dataTransfer.files[0])});
+fileInput.addEventListener('change',e=>{if(e.target.files[0])handleIconFile(e.target.files[0])});
+
+function handleIconFile(file){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    iconDataURL=e.target.result;
+    renderIconPreviews();
+    update();
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderIconPreviews(){
+  const grid=document.getElementById('iconPreviewGrid');
+  grid.innerHTML='';
+  if(!iconDataURL)return;
+  SIZES.forEach(s=>{
+    const div=document.createElement('div');
+    div.className='icon-item';
+    const canvas=document.createElement('canvas');
+    canvas.width=s;canvas.height=s;
+    const displaySize=Math.min(s,80);
+    canvas.style.width=displaySize+'px';
+    canvas.style.height=displaySize+'px';
+    const ctx=canvas.getContext('2d');
+    const img=new Image();
+    img.onload=()=>{ctx.drawImage(img,0,0,s,s)};
+    img.src=iconDataURL;
+    div.appendChild(canvas);
+    const span=document.createElement('span');
+    span.textContent=s+'×'+s;
+    div.appendChild(span);
+    grid.appendChild(div);
+  });
+}
+
+// Purpose checkboxes
+document.getElementById('purpose-any').addEventListener('change',update);
+document.getElementById('purpose-maskable').addEventListener('change',update);
+
+function getPurpose(){
+  const a=document.getElementById('purpose-any').checked;
+  const m=document.getElementById('purpose-maskable').checked;
+  const p=[];
+  if(a)p.push('any');
+  if(m)p.push('maskable');
+  return p.length?p.join(' '):'any';
+}
+
+// Shortcuts
+function addShortcut(){
+  shortcuts.push({name:'',url:'',icon:''});
+  renderShortcuts();
+  update();
+}
+function removeShortcut(i){shortcuts.splice(i,1);renderShortcuts();update()}
+function renderShortcuts(){
+  const c=document.getElementById('shortcutsList');
+  c.innerHTML='';
+  shortcuts.forEach((s,i)=>{
+    const div=document.createElement('div');
+    div.className='list-item';
+    div.innerHTML=`<button class="remove-btn" onclick="removeShortcut(${i})">✕</button>
+      <div class="form-row"><div class="form-group"><label>Name</label><input value="${esc(s.name)}" onchange="shortcuts[${i}].name=this.value;update()"></div>
+      <div class="form-group"><label>URL</label><input value="${esc(s.url)}" onchange="shortcuts[${i}].url=this.value;update()"></div></div>
+      <div class="form-group"><label>Icon URL (optional)</label><input value="${esc(s.icon)}" onchange="shortcuts[${i}].icon=this.value;update()"></div>`;
+    c.appendChild(div);
+  });
+}
+
+// Screenshots
+function addScreenshot(){
+  screenshots.push({src:'',sizes:'',type:'image/png',form_factor:'wide'});
+  renderScreenshots();
+  update();
+}
+function removeScreenshot(i){screenshots.splice(i,1);renderScreenshots();update()}
+function renderScreenshots(){
+  const c=document.getElementById('screenshotsList');
+  c.innerHTML='';
+  screenshots.forEach((s,i)=>{
+    const div=document.createElement('div');
+    div.className='list-item';
+    div.innerHTML=`<button class="remove-btn" onclick="removeScreenshot(${i})">✕</button>
+      <div class="form-row"><div class="form-group"><label>Image URL</label><input value="${esc(s.src)}" onchange="screenshots[${i}].src=this.value;update()"></div>
+      <div class="form-group"><label>Sizes (e.g. 1280x720)</label><input value="${esc(s.sizes)}" onchange="screenshots[${i}].sizes=this.value;update()"></div></div>
+      <div class="form-row"><div class="form-group"><label>Type</label><input value="${esc(s.type)}" onchange="screenshots[${i}].type=this.value;update()"></div>
+      <div class="form-group"><label>Form Factor</label><select onchange="screenshots[${i}].form_factor=this.value;update()">
+        <option value="wide"${s.form_factor==='wide'?' selected':''}>wide</option>
+        <option value="narrow"${s.form_factor==='narrow'?' selected':''}>narrow</option></select></div></div>`;
+    c.appendChild(div);
+  });
+}
+
+function esc(s){return (s||'').replace(/"/g,'&quot;')}
+
+function buildManifest(){
+  const g=id=>document.getElementById('f-'+id).value.trim();
+  const m={};
+  if(g('name'))m.name=g('name');
+  if(g('short_name'))m.short_name=g('short_name');
+  if(g('description'))m.description=g('description');
+  if(g('start_url'))m.start_url=g('start_url');
+  m.display=g('display');
+  if(g('orientation'))m.orientation=g('orientation');
+  if(g('theme_color'))m.theme_color=g('theme_color');
+  if(g('background_color'))m.background_color=g('background_color');
+  if(g('lang'))m.lang=g('lang');
+  if(g('dir'))m.dir=g('dir');
+  if(g('scope'))m.scope=g('scope');
+  if(g('id'))m.id=g('id');
+  const cats=g('categories');
+  if(cats)m.categories=cats.split(',').map(c=>c.trim()).filter(Boolean);
+  if(iconDataURL){
+    const purpose=getPurpose();
+    m.icons=SIZES.map(s=>({src:`icons/icon-${s}x${s}.png`,sizes:`${s}x${s}`,type:'image/png',purpose}));
+  }
+  const sc=shortcuts.filter(s=>s.name||s.url);
+  if(sc.length){
+    m.shortcuts=sc.map(s=>{
+      const o={name:s.name,url:s.url};
+      if(s.icon)o.icons=[{src:s.icon,sizes:'96x96'}];
+      return o;
+    });
+  }
+  const ss=screenshots.filter(s=>s.src);
+  if(ss.length){
+    m.screenshots=ss.map(s=>{
+      const o={src:s.src};
+      if(s.sizes)o.sizes=s.sizes;
+      if(s.type)o.type=s.type;
+      if(s.form_factor)o.form_factor=s.form_factor;
+      return o;
+    });
+  }
+  return m;
+}
+
+function syntaxHighlight(json){
+  return json.replace(/("(\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,m=>{
+    let cls='json-number';
+    if(/^"/.test(m)){cls=/:$/.test(m)?'json-key':'json-string'}
+    else if(/true|false/.test(m))cls='json-bool';
+    else if(/null/.test(m))cls='json-null';
+    return '<span class="'+cls+'">'+m+'</span>';
+  });
+}
+
+function update(){
+  const m=buildManifest();
+  const json=JSON.stringify(m,null,2);
+  document.getElementById('jsonPreview').innerHTML=syntaxHighlight(json);
+}
+
+function getJSON(){return JSON.stringify(buildManifest(),null,2)}
+
+function copyJSON(){
+  navigator.clipboard.writeText(getJSON()).then(()=>showToast('Copied to clipboard!')).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=getJSON();document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();showToast('Copied!');
+  });
+}
+
+function downloadJSON(){
+  const blob=new Blob([getJSON()],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='manifest.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('Downloaded manifest.json');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// Init
+update();
+</script>
+<script src="https://alwingulla.com/88/tag.min.js" data-zone="130647" async data-cfasync="false"></script>
+</body>
+</html>
