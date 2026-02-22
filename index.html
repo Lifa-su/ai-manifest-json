@@ -6,346 +6,247 @@
 <title>PWA Manifest.json Generator</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#1a1a2e;--surface:#16213e;--surface2:#0f3460;--accent:#e94560;--accent2:#533483;--text:#eee;--text2:#aaa;--border:#2a2a4a;--radius:8px}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
-a{color:var(--accent)}
-h1{text-align:center;padding:24px 16px 8px;font-size:1.8rem;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.subtitle{text-align:center;color:var(--text2);margin-bottom:24px;font-size:.9rem}
-.container{max-width:1400px;margin:0 auto;padding:0 16px 40px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
-@media(max-width:900px){.container{grid-template-columns:1fr}}
-.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;overflow:auto}
-.panel h2{font-size:1.1rem;margin-bottom:16px;color:var(--accent);display:flex;align-items:center;gap:8px}
-.form-group{margin-bottom:14px}
-.form-group label{display:block;font-size:.85rem;color:var(--text2);margin-bottom:4px}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:.9rem;outline:none;transition:border .2s}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent)}
-.form-group textarea{resize:vertical;min-height:60px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:500px){.form-row{grid-template-columns:1fr}}
-.color-row{display:flex;align-items:center;gap:8px}
-.color-row input[type=color]{width:40px;height:34px;border:none;background:none;cursor:pointer}
-.color-row input[type=text]{flex:1}
-.btn{padding:8px 16px;border:none;border-radius:var(--radius);cursor:pointer;font-size:.85rem;font-weight:600;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
-.btn-primary{background:var(--accent);color:#fff}
-.btn-primary:hover{background:#d63851}
-.btn-secondary{background:var(--surface2);color:var(--text)}
-.btn-secondary:hover{background:#1a4a80}
-.btn-sm{padding:5px 10px;font-size:.8rem}
-.btn-danger{background:#c0392b;color:#fff}
-.btn-danger:hover{background:#a93226}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-/* Icon section */
-.icon-upload{border:2px dashed var(--border);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;transition:border .2s;margin-bottom:16px}
-.icon-upload:hover{border-color:var(--accent)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#1a1a2e;color:#e0e0e0;min-height:100vh}
+a{color:#6c63ff}
+.container{max-width:1400px;margin:0 auto;padding:20px}
+h1{text-align:center;padding:24px 0 8px;font-size:1.8rem;color:#fff}
+.subtitle{text-align:center;color:#888;margin-bottom:24px;font-size:.95rem}
+.main{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:900px){.main{grid-template-columns:1fr}}
+.panel{background:#16213e;border-radius:12px;padding:24px;border:1px solid #0f3460}
+.panel h2{font-size:1.1rem;margin-bottom:16px;color:#6c63ff}
+label{display:block;font-size:.85rem;color:#aaa;margin-bottom:4px;margin-top:12px}
+label:first-child{margin-top:0}
+input[type="text"],input[type="url"],select,textarea{width:100%;padding:10px 12px;background:#1a1a2e;border:1px solid #0f3460;border-radius:8px;color:#e0e0e0;font-size:.9rem;outline:none;transition:border .2s}
+input:focus,select:focus,textarea:focus{border-color:#6c63ff}
+.color-row{display:flex;gap:12px;align-items:center}
+.color-row input[type="color"]{width:48px;height:36px;border:none;background:none;cursor:pointer;border-radius:6px}
+.color-row input[type="text"]{flex:1}
+select{cursor:pointer}
+.icon-upload{margin-top:16px;padding:20px;border:2px dashed #0f3460;border-radius:10px;text-align:center;cursor:pointer;transition:border-color .2s}
+.icon-upload:hover{border-color:#6c63ff}
 .icon-upload input{display:none}
-.icon-grid{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
-.icon-item{text-align:center;background:var(--bg);border-radius:var(--radius);padding:8px;border:1px solid var(--border)}
-.icon-item img{display:block;margin:0 auto 4px;image-rendering:pixelated}
-.icon-item span{font-size:.7rem;color:var(--text2)}
-.purpose-select{margin:12px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.purpose-select label{font-size:.85rem;color:var(--text2);display:flex;align-items:center;gap:4px;cursor:pointer}
-.purpose-select input[type=checkbox]{accent-color:var(--accent)}
-/* Shortcuts / Screenshots */
-.list-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:10px;position:relative}
-.list-item .remove-btn{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--accent);cursor:pointer;font-size:1.1rem}
-/* JSON preview */
-.json-preview{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:.82rem;line-height:1.5;overflow:auto;max-height:70vh;white-space:pre-wrap;word-break:break-all}
-.json-key{color:#e94560}.json-string{color:#53cf8e}.json-number{color:#f0db4f}.json-bool{color:#61afef}.json-null{color:#888}
-.json-bracket{color:#ccc}
-.toast{position:fixed;bottom:24px;right:24px;background:#27ae60;color:#fff;padding:10px 20px;border-radius:var(--radius);font-size:.9rem;opacity:0;transform:translateY(20px);transition:all .3s;pointer-events:none;z-index:999}
-.toast.show{opacity:1;transform:translateY(0)}
-.section-divider{border:none;border-top:1px solid var(--border);margin:20px 0}
-.tag{display:inline-block;background:var(--surface2);color:var(--text);padding:2px 8px;border-radius:12px;font-size:.75rem;margin:2px}
-.categories-wrap{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.icon-previews{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.icon-prev{text-align:center;background:#1a1a2e;border-radius:8px;padding:8px}
+.icon-prev canvas{border-radius:4px;display:block;margin:0 auto 4px}
+.icon-prev span{font-size:.7rem;color:#888}
+.output-section{margin-top:16px}
+.output-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.output-header h3{font-size:.95rem;color:#ccc}
+.btn{padding:8px 16px;background:#6c63ff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.85rem;transition:background .2s}
+.btn:hover{background:#5a52d5}
+.btn:active{transform:scale(.97)}
+.btn-sm{padding:5px 12px;font-size:.8rem}
+.btn-success{background:#2ecc71}
+.btn-success:hover{background:#27ae60}
+pre{background:#0d1117;border-radius:8px;padding:16px;overflow-x:auto;font-size:.82rem;line-height:1.5;color:#c9d1d9;white-space:pre-wrap;word-break:break-word;max-height:500px;overflow-y:auto;border:1px solid #21262d}
+.toast{position:fixed;bottom:24px;right:24px;background:#2ecc71;color:#fff;padding:12px 24px;border-radius:8px;font-size:.9rem;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
+.toast.show{opacity:1}
+.sw-section{margin-top:24px}
+footer{text-align:center;padding:24px;color:#555;font-size:.8rem;margin-top:32px}
 </style>
 </head>
 <body>
-<h1>🔧 PWA Manifest.json Generator</h1>
-<p class="subtitle">Visually create and preview your Progressive Web App manifest</p>
 <div class="container">
-<!-- Left: Form -->
-<div>
-<div class="panel">
-<h2>📋 Basic Info</h2>
-<div class="form-group"><label for="f-name">name</label><input id="f-name" placeholder="My Awesome App"></div>
-<div class="form-row">
-<div class="form-group"><label for="f-short_name">short_name</label><input id="f-short_name" placeholder="MyApp"></div>
-<div class="form-group"><label for="f-id">id</label><input id="f-id" placeholder="/"></div>
+  <h1>PWA Manifest.json Generator</h1>
+  <p class="subtitle">Generate a complete manifest.json and service worker for your Progressive Web App</p>
+  <div class="main">
+    <div class="panel" id="form-panel">
+      <h2>Configuration</h2>
+      <label for="f-name">App Name</label>
+      <input type="text" id="f-name" placeholder="My Awesome App" value="My PWA App">
+      <label for="f-short">Short Name</label>
+      <input type="text" id="f-short" placeholder="MyApp" value="MyApp">
+      <label for="f-desc">Description</label>
+      <input type="text" id="f-desc" placeholder="A progressive web application" value="A progressive web application">
+      <label for="f-start">Start URL</label>
+      <input type="url" id="f-start" placeholder="/" value="/">
+      <label for="f-scope">Scope</label>
+      <input type="text" id="f-scope" placeholder="/" value="/">
+      <label>Theme Color</label>
+      <div class="color-row">
+        <input type="color" id="f-theme-c" value="#6c63ff">
+        <input type="text" id="f-theme" value="#6c63ff">
+      </div>
+      <label>Background Color</label>
+      <div class="color-row">
+        <input type="color" id="f-bg-c" value="#ffffff">
+        <input type="text" id="f-bg" value="#ffffff">
+      </div>
+      <label for="f-display">Display Mode</label>
+      <select id="f-display">
+        <option value="standalone" selected>standalone - App-like, no browser UI</option>
+        <option value="fullscreen">fullscreen - Full screen, no system UI</option>
+        <option value="minimal-ui">minimal-ui - Minimal browser controls</option>
+        <option value="browser">browser - Standard browser tab</option>
+      </select>
+      <label for="f-orient">Orientation</label>
+      <select id="f-orient">
+        <option value="any" selected>any</option>
+        <option value="natural">natural</option>
+        <option value="landscape">landscape</option>
+        <option value="portrait">portrait</option>
+      </select>
+      <label>App Icon</label>
+      <div class="icon-upload" id="icon-drop">
+        <p>Click or drag an image here</p>
+        <p style="font-size:.8rem;color:#666;margin-top:4px">Recommended: 512x512 PNG</p>
+        <input type="file" id="f-icon" accept="image/*">
+      </div>
+      <div class="icon-previews" id="icon-previews"></div>
+    </div>
+    <div class="panel">
+      <h2>Generated manifest.json</h2>
+      <div class="output-header">
+        <h3>Preview</h3>
+        <button class="btn btn-sm" onclick="copyManifest()">Copy JSON</button>
+      </div>
+      <pre id="json-output"></pre>
+      <div class="sw-section">
+        <div class="output-header">
+          <h3>Service Worker Template</h3>
+          <button class="btn btn-sm btn-success" onclick="copySW()">Copy SW</button>
+        </div>
+        <pre id="sw-output"></pre>
+      </div>
+    </div>
+  </div>
+  <footer>PWA Manifest.json Generator</footer>
 </div>
-<div class="form-group"><label for="f-description">description</label><textarea id="f-description" rows="2" placeholder="A brief description of your app"></textarea></div>
-<div class="form-row">
-<div class="form-group"><label for="f-start_url">start_url</label><input id="f-start_url" placeholder="/" value="/"></div>
-<div class="form-group"><label for="f-scope">scope</label><input id="f-scope" placeholder="/"></div>
-</div>
-<div class="form-row">
-<div class="form-group"><label for="f-display">display</label>
-<select id="f-display"><option value="standalone" selected>standalone</option><option value="fullscreen">fullscreen</option><option value="minimal-ui">minimal-ui</option><option value="browser">browser</option></select>
-</div>
-<div class="form-group"><label for="f-orientation">orientation</label>
-<select id="f-orientation"><option value="">— not set —</option><option value="any">any</option><option value="natural">natural</option><option value="portrait">portrait</option><option value="portrait-primary">portrait-primary</option><option value="portrait-secondary">portrait-secondary</option><option value="landscape">landscape</option><option value="landscape-primary">landscape-primary</option><option value="landscape-secondary">landscape-secondary</option></select>
-</div>
-</div>
-<div class="form-row">
-<div class="form-group"><label>theme_color</label>
-<div class="color-row"><input type="color" id="f-theme_color_pick" value="#e94560"><input type="text" id="f-theme_color" value="#e94560"></div>
-</div>
-<div class="form-group"><label>background_color</label>
-<div class="color-row"><input type="color" id="f-background_color_pick" value="#1a1a2e"><input type="text" id="f-background_color" value="#1a1a2e"></div>
-</div>
-</div>
-<div class="form-row">
-<div class="form-group"><label for="f-lang">lang</label><input id="f-lang" placeholder="en-US"></div>
-<div class="form-group"><label for="f-dir">dir</label>
-<select id="f-dir"><option value="">— not set —</option><option value="ltr">ltr</option><option value="rtl">rtl</option><option value="auto">auto</option></select>
-</div>
-</div>
-<div class="form-group"><label for="f-categories">categories (comma-separated)</label><input id="f-categories" placeholder="utilities, productivity"></div>
-</div>
-
-<div class="panel" style="margin-top:16px">
-<h2>🖼️ Icons</h2>
-<div class="icon-upload" id="iconUploadArea">
-<p>📁 Click or drag an image here to upload</p>
-<p style="font-size:.8rem;color:var(--text2)">Recommended: 512×512 PNG</p>
-<input type="file" id="iconFileInput" accept="image/*">
-</div>
-<div class="purpose-select">
-<span style="font-size:.85rem">Purpose:</span>
-<label><input type="checkbox" id="purpose-any" checked> any</label>
-<label><input type="checkbox" id="purpose-maskable"> maskable</label>
-</div>
-<div id="iconPreviewGrid" class="icon-grid"></div>
-</div>
-
-<div class="panel" style="margin-top:16px">
-<h2>⚡ Shortcuts</h2>
-<div id="shortcutsList"></div>
-<button class="btn btn-secondary btn-sm" onclick="addShortcut()">+ Add Shortcut</button>
-</div>
-
-<div class="panel" style="margin-top:16px">
-<h2>📸 Screenshots</h2>
-<div id="screenshotsList"></div>
-<button class="btn btn-secondary btn-sm" onclick="addScreenshot()">+ Add Screenshot</button>
-</div>
-</div>
-
-<!-- Right: JSON Preview -->
-<div>
-<div class="panel" style="position:sticky;top:16px">
-<h2>📄 JSON Preview</h2>
-<div class="actions" style="margin-top:0;margin-bottom:12px">
-<button class="btn btn-primary btn-sm" onclick="copyJSON()">📋 Copy JSON</button>
-<button class="btn btn-secondary btn-sm" onclick="downloadJSON()">💾 Download manifest.json</button>
-</div>
-<div class="json-preview" id="jsonPreview"></div>
-</div>
-</div>
-</div>
-
-<div id="toast" class="toast"></div>
-
+<div class="toast" id="toast"></div>
 <script>
-const SIZES=[48,72,96,128,144,192,256,384,512];
-let iconDataURL=null;
-let shortcuts=[];
-let screenshots=[];
+const SIZES=[72,96,128,144,152,192,384,512];
+let iconDataURLs={};
 
-// Color sync
-document.getElementById('f-theme_color_pick').addEventListener('input',e=>{document.getElementById('f-theme_color').value=e.target.value;update()});
-document.getElementById('f-theme_color').addEventListener('input',e=>{document.getElementById('f-theme_color_pick').value=e.target.value;update()});
-document.getElementById('f-background_color_pick').addEventListener('input',e=>{document.getElementById('f-background_color').value=e.target.value;update()});
-document.getElementById('f-background_color').addEventListener('input',e=>{document.getElementById('f-background_color_pick').value=e.target.value;update()});
+function $(id){return document.getElementById(id)}
+function showToast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
 
-// All form inputs trigger update
-document.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',update));
+// Color picker sync
+$('f-theme-c').addEventListener('input',e=>{$('f-theme').value=e.target.value;update()});
+$('f-theme').addEventListener('input',e=>{$('f-theme-c').value=e.target.value;update()});
+$('f-bg-c').addEventListener('input',e=>{$('f-bg').value=e.target.value;update()});
+$('f-bg').addEventListener('input',e=>{$('f-bg-c').value=e.target.value;update()});
+
+// All inputs trigger update
+document.querySelectorAll('input[type="text"],input[type="url"],select').forEach(el=>el.addEventListener('input',update));
 
 // Icon upload
-const uploadArea=document.getElementById('iconUploadArea');
-const fileInput=document.getElementById('iconFileInput');
-uploadArea.addEventListener('click',()=>fileInput.click());
-uploadArea.addEventListener('dragover',e=>{e.preventDefault();uploadArea.style.borderColor='var(--accent)'});
-uploadArea.addEventListener('dragleave',()=>{uploadArea.style.borderColor='var(--border)'});
-uploadArea.addEventListener('drop',e=>{e.preventDefault();uploadArea.style.borderColor='var(--border)';if(e.dataTransfer.files[0])handleIconFile(e.dataTransfer.files[0])});
-fileInput.addEventListener('change',e=>{if(e.target.files[0])handleIconFile(e.target.files[0])});
+const dropZone=$('icon-drop');
+const fileInput=$('f-icon');
+dropZone.addEventListener('click',()=>fileInput.click());
+dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.style.borderColor='#6c63ff'});
+dropZone.addEventListener('dragleave',()=>{dropZone.style.borderColor='#0f3460'});
+dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.style.borderColor='#0f3460';if(e.dataTransfer.files[0])handleIcon(e.dataTransfer.files[0])});
+fileInput.addEventListener('change',e=>{if(e.target.files[0])handleIcon(e.target.files[0])});
 
-function handleIconFile(file){
+function handleIcon(file){
   const reader=new FileReader();
-  reader.onload=e=>{
-    iconDataURL=e.target.result;
-    renderIconPreviews();
-    update();
+  reader.onload=function(e){
+    const img=new Image();
+    img.onload=function(){
+      const container=$('icon-previews');
+      container.innerHTML='';
+      iconDataURLs={};
+      SIZES.forEach(size=>{
+        const canvas=document.createElement('canvas');
+        canvas.width=size;canvas.height=size;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0,size,size);
+        iconDataURLs[size]=canvas.toDataURL('image/png');
+        const displaySize=Math.min(size,64);
+        const wrapper=document.createElement('div');
+        wrapper.className='icon-prev';
+        const preview=document.createElement('canvas');
+        preview.width=displaySize;preview.height=displaySize;
+        const pctx=preview.getContext('2d');
+        pctx.drawImage(img,0,0,displaySize,displaySize);
+        const label=document.createElement('span');
+        label.textContent=size+'x'+size;
+        wrapper.appendChild(preview);
+        wrapper.appendChild(label);
+        container.appendChild(wrapper);
+      });
+      update();
+    };
+    img.src=e.target.result;
   };
   reader.readAsDataURL(file);
 }
 
-function renderIconPreviews(){
-  const grid=document.getElementById('iconPreviewGrid');
-  grid.innerHTML='';
-  if(!iconDataURL)return;
-  SIZES.forEach(s=>{
-    const div=document.createElement('div');
-    div.className='icon-item';
-    const canvas=document.createElement('canvas');
-    canvas.width=s;canvas.height=s;
-    const displaySize=Math.min(s,80);
-    canvas.style.width=displaySize+'px';
-    canvas.style.height=displaySize+'px';
-    const ctx=canvas.getContext('2d');
-    const img=new Image();
-    img.onload=()=>{ctx.drawImage(img,0,0,s,s)};
-    img.src=iconDataURL;
-    div.appendChild(canvas);
-    const span=document.createElement('span');
-    span.textContent=s+'×'+s;
-    div.appendChild(span);
-    grid.appendChild(div);
-  });
-}
-
-// Purpose checkboxes
-document.getElementById('purpose-any').addEventListener('change',update);
-document.getElementById('purpose-maskable').addEventListener('change',update);
-
-function getPurpose(){
-  const a=document.getElementById('purpose-any').checked;
-  const m=document.getElementById('purpose-maskable').checked;
-  const p=[];
-  if(a)p.push('any');
-  if(m)p.push('maskable');
-  return p.length?p.join(' '):'any';
-}
-
-// Shortcuts
-function addShortcut(){
-  shortcuts.push({name:'',url:'',icon:''});
-  renderShortcuts();
-  update();
-}
-function removeShortcut(i){shortcuts.splice(i,1);renderShortcuts();update()}
-function renderShortcuts(){
-  const c=document.getElementById('shortcutsList');
-  c.innerHTML='';
-  shortcuts.forEach((s,i)=>{
-    const div=document.createElement('div');
-    div.className='list-item';
-    div.innerHTML=`<button class="remove-btn" onclick="removeShortcut(${i})">✕</button>
-      <div class="form-row"><div class="form-group"><label>Name</label><input value="${esc(s.name)}" onchange="shortcuts[${i}].name=this.value;update()"></div>
-      <div class="form-group"><label>URL</label><input value="${esc(s.url)}" onchange="shortcuts[${i}].url=this.value;update()"></div></div>
-      <div class="form-group"><label>Icon URL (optional)</label><input value="${esc(s.icon)}" onchange="shortcuts[${i}].icon=this.value;update()"></div>`;
-    c.appendChild(div);
-  });
-}
-
-// Screenshots
-function addScreenshot(){
-  screenshots.push({src:'',sizes:'',type:'image/png',form_factor:'wide'});
-  renderScreenshots();
-  update();
-}
-function removeScreenshot(i){screenshots.splice(i,1);renderScreenshots();update()}
-function renderScreenshots(){
-  const c=document.getElementById('screenshotsList');
-  c.innerHTML='';
-  screenshots.forEach((s,i)=>{
-    const div=document.createElement('div');
-    div.className='list-item';
-    div.innerHTML=`<button class="remove-btn" onclick="removeScreenshot(${i})">✕</button>
-      <div class="form-row"><div class="form-group"><label>Image URL</label><input value="${esc(s.src)}" onchange="screenshots[${i}].src=this.value;update()"></div>
-      <div class="form-group"><label>Sizes (e.g. 1280x720)</label><input value="${esc(s.sizes)}" onchange="screenshots[${i}].sizes=this.value;update()"></div></div>
-      <div class="form-row"><div class="form-group"><label>Type</label><input value="${esc(s.type)}" onchange="screenshots[${i}].type=this.value;update()"></div>
-      <div class="form-group"><label>Form Factor</label><select onchange="screenshots[${i}].form_factor=this.value;update()">
-        <option value="wide"${s.form_factor==='wide'?' selected':''}>wide</option>
-        <option value="narrow"${s.form_factor==='narrow'?' selected':''}>narrow</option></select></div></div>`;
-    c.appendChild(div);
-  });
-}
-
-function esc(s){return (s||'').replace(/"/g,'&quot;')}
-
 function buildManifest(){
-  const g=id=>document.getElementById('f-'+id).value.trim();
-  const m={};
-  if(g('name'))m.name=g('name');
-  if(g('short_name'))m.short_name=g('short_name');
-  if(g('description'))m.description=g('description');
-  if(g('start_url'))m.start_url=g('start_url');
-  m.display=g('display');
-  if(g('orientation'))m.orientation=g('orientation');
-  if(g('theme_color'))m.theme_color=g('theme_color');
-  if(g('background_color'))m.background_color=g('background_color');
-  if(g('lang'))m.lang=g('lang');
-  if(g('dir'))m.dir=g('dir');
-  if(g('scope'))m.scope=g('scope');
-  if(g('id'))m.id=g('id');
-  const cats=g('categories');
-  if(cats)m.categories=cats.split(',').map(c=>c.trim()).filter(Boolean);
-  if(iconDataURL){
-    const purpose=getPurpose();
-    m.icons=SIZES.map(s=>({src:`icons/icon-${s}x${s}.png`,sizes:`${s}x${s}`,type:'image/png',purpose}));
-  }
-  const sc=shortcuts.filter(s=>s.name||s.url);
-  if(sc.length){
-    m.shortcuts=sc.map(s=>{
-      const o={name:s.name,url:s.url};
-      if(s.icon)o.icons=[{src:s.icon,sizes:'96x96'}];
-      return o;
-    });
-  }
-  const ss=screenshots.filter(s=>s.src);
-  if(ss.length){
-    m.screenshots=ss.map(s=>{
-      const o={src:s.src};
-      if(s.sizes)o.sizes=s.sizes;
-      if(s.type)o.type=s.type;
-      if(s.form_factor)o.form_factor=s.form_factor;
-      return o;
-    });
-  }
-  return m;
+  const icons=SIZES.map(s=>({src:'icons/icon-'+s+'x'+s+'.png',sizes:s+'x'+s,type:'image/png'}));
+  return {
+    name:$('f-name').value||'My PWA App',
+    short_name:$('f-short').value||'MyApp',
+    description:$('f-desc').value||'',
+    start_url:$('f-start').value||'/',
+    scope:$('f-scope').value||'/',
+    display:$('f-display').value,
+    orientation:$('f-orient').value,
+    theme_color:$('f-theme').value||'#6c63ff',
+    background_color:$('f-bg').value||'#ffffff',
+    icons:icons
+  };
 }
 
-function syntaxHighlight(json){
-  return json.replace(/("(\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,m=>{
-    let cls='json-number';
-    if(/^"/.test(m)){cls=/:$/.test(m)?'json-key':'json-string'}
-    else if(/true|false/.test(m))cls='json-bool';
-    else if(/null/.test(m))cls='json-null';
-    return '<span class="'+cls+'">'+m+'</span>';
-  });
+function buildSW(){
+  return `const CACHE_NAME = 'pwa-cache-v1';
+const ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json'
+];
+
+// Install
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(ASSETS))
+      .then(() => self.skipWaiting())
+  );
+});
+
+// Activate
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.filter(key => key !== CACHE_NAME)
+            .map(key => caches.delete(key))
+      )
+    ).then(() => self.clients.claim())
+  );
+});
+
+// Fetch - Cache First Strategy
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(cached => cached || fetch(event.request)
+        .then(response => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME)
+            .then(cache => cache.put(event.request, clone));
+          return response;
+        })
+      )
+      .catch(() => caches.match('/index.html'))
+  );
+});`;
 }
 
 function update(){
-  const m=buildManifest();
-  const json=JSON.stringify(m,null,2);
-  document.getElementById('jsonPreview').innerHTML=syntaxHighlight(json);
+  $('json-output').textContent=JSON.stringify(buildManifest(),null,2);
+  $('sw-output').textContent=buildSW();
 }
 
-function getJSON(){return JSON.stringify(buildManifest(),null,2)}
-
-function copyJSON(){
-  navigator.clipboard.writeText(getJSON()).then(()=>showToast('Copied to clipboard!')).catch(()=>{
-    const ta=document.createElement('textarea');ta.value=getJSON();document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();showToast('Copied!');
-  });
+function copyManifest(){
+  navigator.clipboard.writeText(JSON.stringify(buildManifest(),null,2)).then(()=>showToast('manifest.json copied!')).catch(()=>showToast('Copy failed'));
+}
+function copySW(){
+  navigator.clipboard.writeText(buildSW()).then(()=>showToast('Service Worker copied!')).catch(()=>showToast('Copy failed'));
 }
 
-function downloadJSON(){
-  const blob=new Blob([getJSON()],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='manifest.json';
-  a.click();
-  URL.revokeObjectURL(a.href);
-  showToast('Downloaded manifest.json');
-}
-
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
-}
-
-// Init
 update();
 </script>
 <script src="https://alwingulla.com/88/tag.min.js" data-zone="130647" async data-cfasync="false"></script>
